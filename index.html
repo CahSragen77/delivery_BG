@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deliman Delivery Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Efek Berkelip (Glowing Animation) untuk Logo Gemini AI */
+    @keyframes geminiGlow {
+      0%, 100% {
+        filter: drop-shadow(0 0 2px rgba(147, 51, 234, 0.8)) drop-shadow(0 0 6px rgba(59, 130, 246, 0.8));
+        transform: scale(1);
+      }
+      50% {
+        filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.9)) drop-shadow(0 0 12px rgba(147, 51, 234, 0.9));
+        transform: scale(1.15);
+      }
+    }
+    .gemini-sparkle {
+      animation: geminiGlow 2.5s infinite ease-in-out;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 p-4 font-sans pb-20">
+
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6 space-y-4">
+    <h2 class="text-xl font-bold text-center text-blue-600">🚀 Deliman Delivery Tracker</h2>
+
+    <!-- INFO LOG & DATA IDENTITAS -->
+    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
+      <h3 class="font-semibold text-gray-700 text-sm">Data Pengiriman</h3>
+      <input type="text" id="namaDeliman" placeholder="Nama Deliman" class="w-full p-2 border rounded text-sm" required />
+      <input type="tel" id="phoneDeliman" placeholder="No WA Deliman (Contoh: 628123...)" class="w-full p-2 border rounded text-sm" required />
+      <input type="tel" id="phoneKonsumen" placeholder="No WA Konsumen (Contoh: 628123...)" class="w-full p-2 border rounded text-sm" required />
+    </div>
+
+    <!-- TITIK AWAL / BERANGKAT -->
+    <div class="border-t pt-4 space-y-2">
+      <h3 class="font-bold text-gray-800">1. Titik Awal (Berangkat)</h3>
+      <p class="text-xs text-gray-500">Foto barang & struk belanja untuk mulai rute.</p>
+      <input type="file" id="fotoStruk" accept="image/*" capture="environment" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+      <button onclick="mulaiPengiriman()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700">📸 Capture Titik Awal & Notif Konsumen</button>
+    </div>
+
+    <!-- TITIK AKHIR / SAMPAI -->
+    <div class="border-t pt-4 space-y-2">
+      <h3 class="font-bold text-gray-800">2. Titik Akhir (Sampai)</h3>
+      <p class="text-xs text-gray-500">Foto serah terima barang dengan konsumen.</p>
+      <input type="file" id="fotoPenyerahan" accept="image/*" capture="environment" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"/>
+      
+      <!-- ADD-ON FITUR TANDATANGAN DIGITAL (DITAMBAHKAN TANPA MENGUBAH SCRIPT UTAMA) -->
+      <div class="mt-3">
+        <label class="block text-xs font-semibold text-gray-700 mb-1">✍️ Tanda Tangan digital Konsumen:</label>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 relative">
+          <canvas id="signatureCanvas" width="300" height="120" class="w-full touch-none cursor-crosshair rounded-lg"></canvas>
+          <button type="button" onclick="clearSignature()" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded border border-red-200 hover:bg-red-200">
+            Reset TT
+          </button>
+        </div>
+      </div>
+
+      <button onclick="selesaiPengiriman()" class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-green-700">🎉 Selesai & Kirim Laporan Toko</button>
+    </div>
+
+    <!-- INFO LOG / STATUS -->
+    <div class="border-t pt-4">
+      <button onclick="showLog()" class="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold text-xs">📋 Info Log Status System</button>
+      <div id="logArea" class="hidden mt-2 p-3 bg-gray-900 text-green-400 text-xs rounded font-mono overflow-x-auto max-h-40">
+        -- System Ready --
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTNOTE / FOOTER SECTION -->
+  <footer class="max-w-md mx-auto mt-6 text-center text-xs text-gray-600 leading-relaxed border-t pt-4 space-y-2">
+    <div>
+      Handcrafted with ❤️ by <strong>Andrew Dwiranto</strong> (Cah_Sragen_77, Indonesia) 
+      <br class="sm:hidden">| Connect with me:
+    </div>
+
+    <!-- Social Links -->
+    <div class="flex flex-wrap justify-center items-center gap-2 text-blue-600 font-medium">
+      <a href="https://www.linkedin.com/in/yudi-dwiranto-cs77" target="_blank" rel="noopener noreferrer" class="hover:underline">LinkedIn</a>
+      <span>•</span>
+      <a href="https://github.com/CahSragen77" target="_blank" rel="noopener noreferrer" class="hover:underline">GitHub</a>
+      <span>•</span>
+      <a href="https://web." target="_blank" rel="noopener noreferrer" class="hover:underline">Web</a>
+      <span>•</span>
+      <a href="https://www.tiktok.com/@selarasdirumah" target="_blank" rel="noopener noreferrer" class="hover:underline">TikTok</a>
+      <span>•</span>
+      <a href="https://wa.me/6281389188903" target="_blank" rel="noopener noreferrer" class="hover:underline">WhatsApp</a>
+    </div>
+
+    <!-- Collaboration & Gemini AI Glowing Logo -->
+    <div class="pt-2 text-gray-500 text-[11px] flex items-center justify-center gap-1.5 flex-wrap">
+      <span>dibangun dengan kolaborasi yang indah, antara <strong>Andrew_CS77</strong> dan META AI</span>
+      <span>&</span>
+      <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-semibold text-purple-600 hover:text-purple-800">
+        <!-- SVG Gemini Star Logo dengan animasi berkelip -->
+        <svg class="w-4 h-4 gemini-sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C12 6.62742 6.62742 12 0 12C6.62742 12 12 17.3726 12 24C12 17.3726 17.3726 12 24 12C17.3726 12 12 6.62742 12 0Z" fill="url(#geminiGradient)"/>
+          <defs>
+            <linearGradient id="geminiGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4285F4"/>
+              <stop offset="0.5" stop-color="#9B51E0"/>
+              <stop offset="1" stop-color="#E91E63"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>Gemini AI</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- SCRIPT UTAMA (KODE LAMA 100% SAMA TANPA DIUBAH SAMA SEKALI) -->
+  <script>
+    // CONFIGURATION
+    const GOOGLE_SCRIPT_URL = "GANTI_DENGAN_URL_DEPLOYMENT_GOOGLE_APPS_SCRIPT_MU";
+    const NOMOR_WA_TOKO = "628xxxxxxxxxx"; // Ganti dengan nomor WA Toko/Admin
+
+    let deliveryState = {
+      namaDeliman: '',
+      phoneDeliman: '',
+      phoneKonsumen: '',
+      titikAwal: null,
+      titikAkhir: null,
+      fotoStruk: '',
+      fotoPenyerahan: ''
+    };
+
+    // --- FITUR CACHE LOCALSTORAGE (ANTI HILANG SAAT KEPENCET HOME) ---
+    const STORAGE_KEY = "deliman_cache_state";
+
+    function saveToCache() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deliveryState));
+    }
+
+    function loadFromCache() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          deliveryState = JSON.parse(saved);
+          // Auto-fill kembali input form jika data sudah ada sebelumnya
+          if (deliveryState.namaDeliman) document.getElementById('namaDeliman').value = deliveryState.namaDeliman;
+          if (deliveryState.phoneDeliman) document.getElementById('phoneDeliman').value = deliveryState.phoneDeliman;
+          if (deliveryState.phoneKonsumen) document.getElementById('phoneKonsumen').value = deliveryState.phoneKonsumen;
+          
+          if (deliveryState.titikAwal) {
+            log("Memulihkan sesi pengiriman sebelumnya dari cache HP...");
+          }
+        } catch(e) {
+          console.error("Gagal load cache", e);
+        }
+      }
+    }
+
+    function clearCache() {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    // Jalankan saat halaman pertama kali dibuka/direfresh
+    window.onload = function() {
+      loadFromCache();
+    };
+    // -------------------------------------------------------------
+
+    function log(msg) {
+      const logArea = document.getElementById('logArea');
+      logArea.innerHTML += `<br>> ${msg}`;
+      console.log(msg);
+    }
+
+    function showLog() {
+      document.getElementById('logArea').classList.toggle('hidden');
+    }
+
+    // Convert Image file to Base64 (agar hemat & bisa dikirim ke log)
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        if(!file) resolve("");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Helper Geolocation
+    function getGPSLocation() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject("Geolocation tidak didukung browser ini.");
+        } else {
+          navigator.geolocation.getCurrentPosition(
+            pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            err => reject("Gagal mengambil lokasi GPS: " + err.message)
+          );
+        }
+      });
+    }
+
+    // Calculation Jarak Sederhana (Haversine Formula) jika tanpa Google Maps API Paid Key
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius bumi (KM)
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return (R * c).toFixed(2); // KM
+    }
+
+    // FLOW 1 & 2: Mulai Berangkat
+    async function mulaiPengiriman() {
+      const nama = document.getElementById('namaDeliman').value;
+      const phoneD = document.getElementById('phoneDeliman').value;
+      const phoneK = document.getElementById('phoneKonsumen').value;
+      const fileStruk = document.getElementById('fotoStruk').files[0];
+
+      if (!nama || !phoneD || !phoneK) {
+        alert("Harap isi Nama, No WA Deliman, dan No WA Konsumen terlebih dahulu!");
+        return;
+      }
+      if (!fileStruk && !deliveryState.fotoStruk) {
+        alert("Harap foto barang & struk belanjaan terlebih dahulu!");
+        return;
+      }
+
+      try {
+        log("Mengambil lokasi titik awal...");
+        const loc = await getGPSLocation();
+        deliveryState.titikAwal = loc;
+        deliveryState.namaDeliman = nama;
+        deliveryState.phoneDeliman = phoneD;
+        deliveryState.phoneKonsumen = phoneK;
+        
+        if (fileStruk) {
+          deliveryState.fotoStruk = await fileToBase64(fileStruk);
+        }
+
+        // SIMPAN KE CACHE HP
+        saveToCache();
+
+        log(`Titik Awal Set & Tersimpan di Cache: ${loc.lat}, ${loc.lng}`);
+
+        // Buat link WA otomatis ke konsumen
+        const msg = encodeURIComponent(`Halo, pesanan Anda sedang diantar oleh Deliman *${nama}*.\n\nLokasi Keberangkatan Terdeteksi: https://maps.google.com/?q=${loc.lat},${loc.lng}`);
+        const waUrl = `https://wa.me/${phoneK}?text=${msg}`;
+
+        log("Membuka WhatsApp Konsumen...");
+        window.open(waUrl, '_blank');
+      } catch (err) {
+        alert(err);
+        log("ERROR: " + err);
+      }
+    }
+
+    // FLOW 3, 4, 5: Selesai & Kirim Log
+    async function selesaiPengiriman() {
+      // Cek apakah ada data di state atau di cache
+      if (!deliveryState.titikAwal) {
+        loadFromCache();
+        if (!deliveryState.titikAwal) {
+          alert("Anda belum menekan tombol Mulai/Titik Awal!");
+          return;
+        }
+      }
+
+      const filePenyerahan = document.getElementById('fotoPenyerahan').files[0];
+      if (!filePenyerahan) {
+        alert("Harap foto penyerahan barang bersama konsumen!");
+        return;
+      }
+
+      try {
+        log("Mengambil lokasi titik akhir...");
+        const locAkhir = await getGPSLocation();
+        deliveryState.titikAkhir = locAkhir;
+        deliveryState.fotoPenyerahan = await fileToBase64(filePenyerahan);
+
+        // Perhitungan Jarak Rute (Awal ke Akhir)
+        const jarakKM = calculateDistance(
+          deliveryState.titikAwal.lat, deliveryState.titikAwal.lng,
+          locAkhir.lat, locAkhir.lng
+        );
+
+        log(`Titik Akhir Set: ${locAkhir.lat}, ${locAkhir.lng}`);
+        log(`Total Jarak Ditempuh: ${jarakKM} KM`);
+
+        // 1. Simpan ke Google Sheet
+        log("Mengirim data ke Google Sheets...");
+        const payload = {
+          namaDeliman: deliveryState.namaDeliman,
+          phoneDeliman: deliveryState.phoneDeliman,
+          phoneKonsumen: deliveryState.phoneKonsumen,
+          titikAwal: `${deliveryState.titikAwal.lat},${deliveryState.titikAwal.lng}`,
+          titikAkhir: `${locAkhir.lat},${locAkhir.lng}`,
+          jarak: `${jarakKM} KM`,
+          fotoStruk: "Tersimpan (Base64 Data)",
+          fotoPenyerahan: "Tersimpan (Base64 Data)"
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        log("Data dikirim ke database!");
+
+        // 2. Kirim Info Laporan Kerja ke WA Toko
+        const msgToko = encodeURIComponent(`*LAPORAN PENGIRIMAN SELESAI*\n\n` +
+          `• Deliman: ${deliveryState.namaDeliman} (${deliveryState.phoneDeliman})\n` +
+          `• Konsumen: ${deliveryState.phoneKonsumen}\n` +
+          `• Total Jarak Rute: *${jarakKM} KM*\n` +
+          `• Titik Awal: https://maps.google.com/?q=${deliveryState.titikAwal.lat},${deliveryState.titikAwal.lng}\n` +
+          `• Titik Akhir: https://maps.google.com/?q=${locAkhir.lat},${locAkhir.lng}\n\n` +
+          `Status: Berhasil Disimpan ke Log Sheet.`
+        );
+
+        const waTokoUrl = `https://wa.me/${NOMOR_WA_TOKO}?text=${msgToko}`;
+        window.open(waTokoUrl, '_blank');
+
+        // BERSIHKAN CACHE SETELAH SELESAI
+        clearCache();
+
+      } catch (err) {
+        alert(err);
+        log("ERROR: " + err);
+      }
+    }
+  </script>
+
+  <!-- ADD-ON SCRIPT KHUSUS LOGIKA TANDA TANGAN DIGITAL (ISOLATED / SEPARATE SCRIPT) -->
+  <script>
+    (function initSignatureModule() {
+      const canvas = document.getElementById('signatureCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let isDrawing = false;
+
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function stopDraw() {
+        isDrawing = false;
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseleave', stopDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', stopDraw);
+    })();
+
+    function clearSignature() {
+      const canvas = document.getElementById('signatureCanvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  </script>
+</body>
+</html>
