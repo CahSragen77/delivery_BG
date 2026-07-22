@@ -1,6 +1,6 @@
 // CONFIGURATION
     const GOOGLE_SCRIPT_URL = "GANTI_DENGAN_URL_DEPLOYMENT_GOOGLE_APPS_SCRIPT_MU";
-    const NOMOR_WA_TOKO = "628xxxxxxxxxx"; // Ganti dengan nomor WA Toko/Admin
+    const NOMOR_WA_TOKO = "6281122220723"; // Ganti dengan nomor WA Toko/Admin
 
     let deliveryState = {
       namaDeliman: '',
